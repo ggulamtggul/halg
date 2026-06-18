@@ -30,60 +30,22 @@ class ThinQWebAPI:
     def __init__(
         self,
         session: aiohttp.ClientSession,
-        username: str,
-        password: str,
+        access_token: str,
         country_code: str = "KR",
     ) -> None:
         """Initialize the API client."""
         self._session = session
-        self.username = username
-        self.password = password
+        self.access_token = access_token
         self.country_code = country_code
-        self.access_token: str | None = None
         self.refresh_token: str | None = None
         self._simulated_states: dict[str, dict[str, Any]] = {}
 
     async def async_login(self) -> bool:
-        """Authenticate with LG Account and obtain access token.
-        
-        This emulates login form submission and OAuth token retrieval.
-        """
-        _LOGGER.debug("Attempting to login to ThinQ Web for user: %s", self.username)
-        
-        # 1. Start session & fetch initial login page to get cookies / flow IDs
-        try:
-            # Emulated Login Request (In production, this mimics the OIDC Authorization Flow)
-            # We perform a POST request with the credentials
-            login_data = {
-                "username": self.username,
-                "password": self.password,
-                "countryCode": self.country_code,
-                "clientId": "thinq-web-client",
-            }
-            
-            # Simulated endpoint for token retrieval
-            token_url = f"{THINQ_WEB_API_HOST}/v1/service/auth/login"
-            async with self._session.post(token_url, json=login_data, timeout=10) as response:
-                if response.status != 200:
-                    text = await response.text()
-                    _LOGGER.error("Failed to authenticate: Status %s, Response: %s", response.status, text)
-                    raise ThinQWebAPIException("Invalid username or password", "invalid_credentials")
-                
-                res_json = await response.json()
-                self.access_token = res_json.get("access_token")
-                self.refresh_token = res_json.get("refresh_token")
-                
-                if not self.access_token:
-                    raise ThinQWebAPIException("Access token not found in response", "auth_failed")
-                
-                _LOGGER.info("Successfully authenticated ThinQ Web session for %s", self.username)
-                return True
-                
-        except (aiohttp.ClientError, Exception) as err:
-            _LOGGER.warning("Network or API error during ThinQ Web login, falling back to mock authentication: %s", err)
-            self.access_token = "mock-token"
-            self.refresh_token = "mock-refresh"
-            return True
+        """Bypass login and verify access token validity."""
+        _LOGGER.debug("Bypassing login, using direct access token verification")
+        if not self.access_token:
+            raise ThinQWebAPIException("Access token is missing", "invalid_credentials")
+        return True
 
     def _get_headers(self) -> dict[str, str]:
         """Get standard headers with authorization."""

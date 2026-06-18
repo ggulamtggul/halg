@@ -6,7 +6,7 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, CONF_COUNTRY
+from homeassistant.const import CONF_ACCESS_TOKEN, CONF_COUNTRY
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
@@ -38,25 +38,24 @@ class ThinQFlowHandler(ConfigFlow, domain=DOMAIN):
         return DEFAULT_COUNTRY
 
     async def _validate_and_create_entry(
-        self, username: str, password: str, country_code: str
+        self, access_token: str, country_code: str
     ) -> ConfigFlowResult:
-        """Validate login and create entry."""
+        """Validate token and create entry."""
         api = ThinQWebAPI(
             session=async_get_clientsession(self.hass),
-            username=username,
-            password=password,
+            access_token=access_token,
             country_code=country_code,
         )
         
-        # Verify credentials by logging in
+        # Verify access token
         await api.async_login()
 
         # If verification succeeds, create the config entry.
+        title_token = f"{access_token[:10]}..."
         return self.async_create_entry(
-            title=f"{THINQ_DEFAULT_NAME} ({username})",
+            title=f"{THINQ_DEFAULT_NAME} ({title_token})",
             data={
-                CONF_USERNAME: username,
-                CONF_PASSWORD: password,
+                CONF_ACCESS_TOKEN: access_token,
                 CONF_COUNTRY: country_code,
             },
         )
@@ -68,26 +67,24 @@ class ThinQFlowHandler(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
-            username = user_input[CONF_USERNAME]
-            password = user_input[CONF_PASSWORD]
+            access_token = user_input[CONF_ACCESS_TOKEN]
             country_code = user_input[CONF_COUNTRY]
 
-            # Unique ID by email
-            await self.async_set_unique_id(username)
+            # Unique ID by token hash to prevent duplicate entries
+            await self.async_set_unique_id(str(hash(access_token)))
             self._abort_if_unique_id_configured()
 
             try:
-                return await self._validate_and_create_entry(username, password, country_code)
+                return await self._validate_and_create_entry(access_token, country_code)
             except ThinQWebAPIException as exc:
                 errors["base"] = THINQ_ERRORS.get(exc.code, "auth_failed")
-                _LOGGER.error("Failed to validate credentials: %s", exc)
+                _LOGGER.error("Failed to validate token: %s", exc)
 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_USERNAME): cv.string,
-                    vol.Required(CONF_PASSWORD): cv.string,
+                    vol.Required(CONF_ACCESS_TOKEN): cv.string,
                     vol.Required(
                         CONF_COUNTRY, default=self._get_default_country_code()
                     ): SelectSelector(

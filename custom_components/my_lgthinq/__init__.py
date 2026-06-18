@@ -6,8 +6,7 @@ import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    CONF_PASSWORD,
-    CONF_USERNAME,
+    CONF_ACCESS_TOKEN,
     CONF_COUNTRY,
 )
 from homeassistant.core import HomeAssistant
@@ -36,14 +35,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ThinqConfigEntry) -> boo
     """Set up an entry."""
     entry.runtime_data = ThinqData()
 
-    username = entry.data[CONF_USERNAME]
-    password = entry.data[CONF_PASSWORD]
+    access_token = entry.data[CONF_ACCESS_TOKEN]
     country_code = entry.data[CONF_COUNTRY]
 
     api = ThinQWebAPI(
         session=async_get_clientsession(hass),
-        username=username,
-        password=password,
+        access_token=access_token,
         country_code=country_code,
     )
 

@@ -2,22 +2,21 @@
   "config": {
     "step": {
       "user": {
-        "title": "LG ThinQ Web Dashboard Login",
-        "description": "Please enter your LG ThinQ account credentials (Email and Password) and select your Country Code.",
+        "title": "LG ThinQ Web Access Token Registration",
+        "description": "Please enter the Access Token (JWT) extracted from the LG ThinQ Web portal (via F12 Developer Tools -> Local Storage or Network tab).",
         "data": {
-          "username": "Email ID",
-          "password": "Password",
+          "access_token": "Access Token",
           "country": "Country Code"
         }
       }
     },
     "error": {
-      "invalid_credentials": "Invalid username or password.",
+      "invalid_credentials": "Invalid or expired access token.",
       "cannot_connect": "Connection to LG account server failed.",
-      "auth_failed": "Authentication failed. Please verify your credentials."
+      "auth_failed": "Authentication failed. Please verify your token."
     },
     "abort": {
-      "already_configured": "This LG account is already configured."
+      "already_configured": "This access token is already registered."
     }
   },
   "entity": {

@@ -2,22 +2,21 @@
   "config": {
     "step": {
       "user": {
-        "title": "LG 씽큐 웹 대시보드 로그인",
-        "description": "LG ThinQ 계정 정보(이메일 및 비밀번호)를 입력하고 국가 코드를 선택해 주세요.",
+        "title": "LG 씽큐 웹 액세스 토큰 등록",
+        "description": "LG ThinQ Web 포털에서 추출한 Access Token(JWT)을 입력해 주세요. (F12 개발자 도구 -> Local Storage 또는 Network 탭에서 확인 가능)",
         "data": {
-          "username": "이메일 ID",
-          "password": "비밀번호",
+          "access_token": "Access Token",
           "country": "국가 코드"
         }
       }
     },
     "error": {
-      "invalid_credentials": "잘못된 이메일 또는 비밀번호입니다.",
+      "invalid_credentials": "잘못된 토큰 정보이거나 만료되었습니다.",
       "cannot_connect": "LG 계정 서버와의 연결에 실패했습니다.",
       "auth_failed": "인증 실패 또는 연결 오류입니다."
     },
     "abort": {
-      "already_configured": "이 LG 계정은 이미 등록되어 있습니다."
+      "already_configured": "이 액세스 토큰은 이미 등록되어 있습니다."
     }
   },
   "entity": {
