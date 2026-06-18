@@ -93,31 +93,8 @@ class ThinQWebAPI:
         if not self.access_token:
             await self.async_login()
             
-        url = f"{THINQ_WEB_API_HOST}/v1/service/devices"
-        _LOGGER.debug("Fetching device list from: %s", url)
-        
-        try:
-            if self.access_token == "mock-token":
-                raise aiohttp.ClientError("Using mock token, skip real API request")
-            async with self._session.get(url, headers=self._get_headers(), timeout=10) as response:
-                if response.status == 401:
-                    # Token expired, try refreshing
-                    if await self.async_refresh_token():
-                        async with self._session.get(url, headers=self._get_headers(), timeout=10) as retry_resp:
-                            if retry_resp.status != 200:
-                                raise ThinQWebAPIException("Session expired and could not refresh", "session_expired")
-                            return await retry_resp.json()
-                    else:
-                        raise ThinQWebAPIException("Session expired", "session_expired")
-                        
-                if response.status != 200:
-                    text = await response.text()
-                    raise ThinQWebAPIException(f"Failed to fetch devices: {text}", "api_error")
-                    
-                return await response.json()
-                
-        except (aiohttp.ClientError, Exception) as err:
-            _LOGGER.warning("Failed to fetch devices from API, returning mock device: %s", err)
+        # If mock token is explicitly provided (for testing/dev), return mock device
+        if self.access_token == "mock-token":
             return [
                 {
                     "deviceId": "mock-robot-vacuum-id",
@@ -126,40 +103,64 @@ class ThinQWebAPI:
                     "modelName": "B-95AW.CKOR",
                 }
             ]
+            
+        url = f"{THINQ_WEB_API_HOST}/v1/service/devices"
+        _LOGGER.debug("Fetching device list from: %s", url)
+        
+        try:
+            async with self._session.get(url, headers=self._get_headers(), timeout=10) as response:
+                if response.status == 401:
+                    # Token expired, try refreshing
+                    if await self.async_refresh_token():
+                        async with self._session.get(url, headers=self._get_headers(), timeout=10) as retry_resp:
+                            if retry_resp.status != 200:
+                                text = await retry_resp.text()
+                                raise ThinQWebAPIException(f"Session expired and could not refresh: {text}", "session_expired")
+                            return await retry_resp.json()
+                    else:
+                        raise ThinQWebAPIException("Session expired and token refresh failed", "session_expired")
+                        
+                if response.status != 200:
+                    text = await response.text()
+                    raise ThinQWebAPIException(f"Failed to fetch devices: Status {response.status}, Response: {text}", "api_error")
+                    
+                return await response.json()
+                
+        except aiohttp.ClientError as err:
+            raise ThinQWebAPIException(f"Connection failed to fetch devices: {err}", "connection_error") from err
 
     async def async_get_device_status(self, device_id: str) -> dict[str, Any]:
         """Fetch status detail of a specific device."""
         if not self.access_token:
             await self.async_login()
             
-        # Initialize simulated status if not exists
-        if device_id not in self._simulated_states:
-            self._simulated_states[device_id] = {
-                "runState": "sleep",
-                "battery": 95,
-                "robotCleanerJobMode": "cleaning",
-                "cleaningMode": "suction_mop",
-                "suctionStrength": "strong",
-                "waterSupply": "medium",
-                "carpetMode": "smart_carpet",
-                "volume": "medium",
-                "aiObstacleAvoidance": "on",
-                "autoResume": "on",
-                "childLock": "off",
-                "autoEmptyDustbin": "on",
-                "autoMopWash": "on",
-                "autoMopDry": "on",
-                "dndMode": "off",
-                "mainBrushLife": 85,
-                "sideBrushLife": 90,
-                "filterLife": 75,
-                "mopLife": 95,
-                "dustBagLife": 40,
-                "modelName": "B-95AW.CKOR",
-                "serialNumber": "408SSCS09715",
-            }
-
+        # Handle mock/simulation explicitly
         if self.access_token == "mock-token":
+            if device_id not in self._simulated_states:
+                self._simulated_states[device_id] = {
+                    "runState": "sleep",
+                    "battery": 95,
+                    "robotCleanerJobMode": "cleaning",
+                    "cleaningMode": "suction_mop",
+                    "suctionStrength": "strong",
+                    "waterSupply": "medium",
+                    "carpetMode": "smart_carpet",
+                    "volume": "medium",
+                    "aiObstacleAvoidance": "on",
+                    "autoResume": "on",
+                    "childLock": "off",
+                    "autoEmptyDustbin": "on",
+                    "autoMopWash": "on",
+                    "autoMopDry": "on",
+                    "dndMode": "off",
+                    "mainBrushLife": 85,
+                    "sideBrushLife": 90,
+                    "filterLife": 75,
+                    "mopLife": 95,
+                    "dustBagLife": 40,
+                    "modelName": "B-95AW.CKOR",
+                    "serialNumber": "408SSCS09715",
+                }
             return self._simulated_states[device_id]
 
         url = f"{THINQ_WEB_API_HOST}/v1/service/devices/{device_id}/status"
@@ -171,24 +172,20 @@ class ThinQWebAPI:
                     if await self.async_refresh_token():
                         async with self._session.get(url, headers=self._get_headers(), timeout=10) as retry_resp:
                             if retry_resp.status != 200:
-                                raise ThinQWebAPIException("Session expired", "session_expired")
-                            api_data = await retry_resp.json()
-                            self._simulated_states[device_id].update(api_data)
-                            return self._simulated_states[device_id]
+                                text = await retry_resp.text()
+                                raise ThinQWebAPIException(f"Session expired: {text}", "session_expired")
+                            return await retry_resp.json()
                     else:
-                        raise ThinQWebAPIException("Session expired", "session_expired")
+                        raise ThinQWebAPIException("Session expired and refresh failed", "session_expired")
                         
                 if response.status != 200:
                     text = await response.text()
-                    raise ThinQWebAPIException(f"Failed to fetch status: {text}", "api_error")
+                    raise ThinQWebAPIException(f"Failed to fetch status: Status {response.status}, Response: {text}", "api_error")
                     
-                api_data = await response.json()
-                self._simulated_states[device_id].update(api_data)
-                return self._simulated_states[device_id]
+                return await response.json()
                 
-        except (aiohttp.ClientError, Exception) as err:
-            _LOGGER.warning("Failed to fetch device status from API, returning simulated state: %s", err)
-            return self._simulated_states[device_id]
+        except aiohttp.ClientError as err:
+            raise ThinQWebAPIException(f"Connection failed to fetch status: {err}", "connection_error") from err
 
     async def async_set_device_control(
         self, device_id: str, command: str, value: str
@@ -197,13 +194,12 @@ class ThinQWebAPI:
         if not self.access_token:
             await self.async_login()
 
-        # Update simulated state locally
-        if device_id in self._simulated_states:
-            self._simulated_states[device_id][command] = value
-        else:
-            self._simulated_states[device_id] = {command: value}
-            
+        # Handle mock/simulation explicitly
         if self.access_token == "mock-token":
+            if device_id in self._simulated_states:
+                self._simulated_states[device_id][command] = value
+            else:
+                self._simulated_states[device_id] = {command: value}
             _LOGGER.info("Mock control command success: %s -> %s", command, value)
             return True
             
@@ -225,7 +221,13 @@ class ThinQWebAPI:
                         ) as retry_resp:
                             return retry_resp.status == 200
                     return False
+                        
+                if response.status != 200:
+                    text = await response.text()
+                    _LOGGER.warning("Control command failed with status %s: %s", response.status, text)
+                    return False
+                    
+                return True
                 
         except aiohttp.ClientError as err:
-            _LOGGER.warning("Failed to send control command to API, fallback to simulated success: %s", err)
-            return True
+            raise ThinQWebAPIException(f"Connection failed to control device: {err}", "connection_error") from err
