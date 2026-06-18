@@ -49,9 +49,6 @@ async def test_vacuum_entity_start():
         # Trigger state update
         entity._update_status()
         
-        # Check if activity and battery levels map correctly
-        assert entity.battery_level == 95
-
         # Perform start
         await entity.async_start()
         

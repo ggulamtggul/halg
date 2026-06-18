@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 
 # Emulated host endpoints for ThinQ Web portal
 LG_ACCOUNT_URL = "https://kr.m.lgaccount.com/login"
-THINQ_WEB_API_HOST = "https://kr.thinq-web-api.lgthinq.com"
+THINQ_WEB_API_HOST = "https://kic-service.lgthinq.com:46030"
 
 
 class ThinQWebAPIException(Exception):
@@ -62,7 +62,7 @@ class ThinQWebAPI:
             }
             
             # Simulated endpoint for token retrieval
-            token_url = f"{THINQ_WEB_API_HOST}/api/v1/auth/login"
+            token_url = f"{THINQ_WEB_API_HOST}/v1/service/auth/login"
             async with self._session.post(token_url, json=login_data, timeout=10) as response:
                 if response.status != 200:
                     text = await response.text()
@@ -101,7 +101,7 @@ class ThinQWebAPI:
         if not self.access_token:
             await self.async_login()
             
-        url = f"{THINQ_WEB_API_HOST}/api/v1/devices"
+        url = f"{THINQ_WEB_API_HOST}/v1/service/devices"
         _LOGGER.debug("Fetching device list from: %s", url)
         
         try:
@@ -168,7 +168,7 @@ class ThinQWebAPI:
         if self.access_token == "mock-token":
             return self._simulated_states[device_id]
 
-        url = f"{THINQ_WEB_API_HOST}/api/v1/devices/{device_id}/status"
+        url = f"{THINQ_WEB_API_HOST}/v1/service/devices/{device_id}/status"
         _LOGGER.debug("Fetching status for device %s", device_id)
         
         try:
@@ -211,7 +211,7 @@ class ThinQWebAPI:
             _LOGGER.info("Mock control command success: %s -> %s", command, value)
             return True
             
-        url = f"{THINQ_WEB_API_HOST}/api/v1/devices/{device_id}/control"
+        url = f"{THINQ_WEB_API_HOST}/v1/service/devices/{device_id}/control"
         payload = {
             "command": command,
             "value": value,

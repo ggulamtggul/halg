@@ -81,7 +81,6 @@ class ThinQStateVacuumEntity(ThinQEntity, StateVacuumEntity):
 
     _attr_supported_features = (
         VacuumEntityFeature.STATE
-        | VacuumEntityFeature.BATTERY
         | VacuumEntityFeature.START
         | VacuumEntityFeature.PAUSE
         | VacuumEntityFeature.RETURN_HOME
@@ -96,18 +95,15 @@ class ThinQStateVacuumEntity(ThinQEntity, StateVacuumEntity):
 
         # Fetch status fields
         current_state = self.coordinator.data.get("runState", "sleep")
-        battery_level = self.coordinator.data.get("battery", 0)
 
         # Update HA state
         self._attr_activity = ROBOT_STATUS_TO_HA.get(current_state, VacuumActivity.IDLE)
-        self._attr_battery_level = battery_level
 
         _LOGGER.debug(
-            "[%s] update status: %s -> %s (battery_level=%s)",
+            "[%s] update status: %s -> %s",
             self.coordinator.device_name,
             current_state,
             self.state,
-            self.battery_level,
         )
 
     async def async_start(self, **kwargs) -> None:
