@@ -1,0 +1,33 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "LG ThinQ Web Dashboard Login",
+        "description": "Please enter your LG ThinQ account credentials (Email and Password) and select your Country Code.",
+        "data": {
+          "username": "Email ID",
+          "password": "Password",
+          "country": "Country Code"
+        }
+      }
+    },
+    "error": {
+      "invalid_credentials": "Invalid username or password.",
+      "cannot_connect": "Connection to LG account server failed.",
+      "auth_failed": "Authentication failed. Please verify your credentials."
+    },
+    "abort": {
+      "already_configured": "This LG account is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_state": {
+        "name": "Current State"
+      },
+      "current_job_mode": {
+        "name": "Job Mode"
+      }
+    }
+  }
+}

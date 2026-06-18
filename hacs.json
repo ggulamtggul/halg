@@ -1,0 +1,6 @@
+{
+  "name": "LG ThinQ Custom Integration",
+  "iot_class": "cloud_push",
+  "render_readme": true,
+  "country": ["KR", "US"]
+}

@@ -1,0 +1,12 @@
+{
+  "domain": "my_lgthinq",
+  "name": "LG ThinQ Web Control (Custom)",
+  "codeowners": ["@custom"],
+  "config_flow": true,
+  "documentation": "https://github.com/hacs/integration",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "loggers": ["custom_components.my_lgthinq"],
+  "requirements": [],
+  "version": "1.0.0"
+}
