@@ -35,12 +35,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: ThinqConfigEntry) -> boo
     """Set up an entry."""
     entry.runtime_data = ThinqData()
 
-    access_token = entry.data[CONF_ACCESS_TOKEN]
+    token = entry.data[CONF_ACCESS_TOKEN]
+    access_token = token
+    refresh_token = None
+    if token.strip().startswith("{"):
+        try:
+            import json
+            token_data = json.loads(token)
+            access_token = token_data.get("accessToken") or token_data.get("access_token") or token
+            refresh_token = token_data.get("refreshToken") or token_data.get("refresh_token")
+        except Exception:
+            pass
+
     country_code = entry.data[CONF_COUNTRY]
 
     api = ThinQWebAPI(
         session=async_get_clientsession(hass),
         access_token=access_token,
+        refresh_token=refresh_token,
         country_code=country_code,
     )
 

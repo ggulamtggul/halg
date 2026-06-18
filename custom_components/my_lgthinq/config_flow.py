@@ -41,9 +41,22 @@ class ThinQFlowHandler(ConfigFlow, domain=DOMAIN):
         self, access_token: str, country_code: str
     ) -> ConfigFlowResult:
         """Validate token and create entry."""
+        token = access_token
+        parsed_access_token = token
+        parsed_refresh_token = None
+        if token.strip().startswith("{"):
+            try:
+                import json
+                token_data = json.loads(token)
+                parsed_access_token = token_data.get("accessToken") or token_data.get("access_token") or token
+                parsed_refresh_token = token_data.get("refreshToken") or token_data.get("refresh_token")
+            except Exception:
+                pass
+
         api = ThinQWebAPI(
             session=async_get_clientsession(self.hass),
-            access_token=access_token,
+            access_token=parsed_access_token,
+            refresh_token=parsed_refresh_token,
             country_code=country_code,
         )
         
@@ -51,11 +64,11 @@ class ThinQFlowHandler(ConfigFlow, domain=DOMAIN):
         await api.async_login()
 
         # If verification succeeds, create the config entry.
-        title_token = f"{access_token[:10]}..."
+        title_token = f"{parsed_access_token[:10]}..."
         return self.async_create_entry(
             title=f"{THINQ_DEFAULT_NAME} ({title_token})",
             data={
-                CONF_ACCESS_TOKEN: access_token,
+                CONF_ACCESS_TOKEN: token,
                 CONF_COUNTRY: country_code,
             },
         )
