@@ -145,6 +145,8 @@ class ThinQWebAPI:
                 "battery": 95,
                 "robotCleanerJobMode": "cleaning",
                 "cleaningMode": "suction_mop",
+                "suctionStrength": "strong",
+                "waterSupply": "medium",
                 "carpetMode": "smart_carpet",
                 "volume": "medium",
                 "aiObstacleAvoidance": "on",

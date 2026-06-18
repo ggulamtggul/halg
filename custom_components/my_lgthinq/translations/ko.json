@@ -27,6 +27,105 @@
       },
       "current_job_mode": {
         "name": "작업 모드"
+      },
+      "main_brush_life": {
+        "name": "회전솔 수명"
+      },
+      "side_brush_life": {
+        "name": "측면 회전솔 수명"
+      },
+      "filter_life": {
+        "name": "필터 수명"
+      },
+      "mop_life": {
+        "name": "물걸레 수명"
+      },
+      "dust_bag_life": {
+        "name": "먼지 봉투 수명"
+      }
+    },
+    "select": {
+      "cleaning_mode": {
+        "name": "청소 방식",
+        "state": {
+          "suction_mop": "먼지 흡입 + 물걸레",
+          "suction_only": "먼지 흡입",
+          "mop_only": "물걸레"
+        }
+      },
+      "carpet_mode": {
+        "name": "카펫 맞춤 운전",
+        "state": {
+          "smart_carpet": "스마트 카펫 청소",
+          "carpet_avoidance": "카펫 회피"
+        }
+      },
+      "product_volume": {
+        "name": "제품 볼륨",
+        "state": {
+          "loud": "크게",
+          "medium": "보통",
+          "soft": "작게",
+          "mute": "음소거"
+        }
+      },
+      "suction_strength": {
+        "name": "흡입 세기",
+        "state": {
+          "turbo": "터보",
+          "strong": "강",
+          "medium": "보통",
+          "weak": "약"
+        }
+      },
+      "water_supply": {
+        "name": "물 공급량",
+        "state": {
+          "high": "많음",
+          "medium": "보통",
+          "low": "적음",
+          "none": "없음"
+        }
+      }
+    },
+    "switch": {
+      "ai_obstacle_avoidance": {
+        "name": "AI 장애물 회피"
+      },
+      "auto_resume": {
+        "name": "자동으로 이어서 청소하기"
+      },
+      "child_lock": {
+        "name": "제품 버튼 잠금"
+      },
+      "auto_empty_dustbin": {
+        "name": "자동 먼지 비움"
+      },
+      "auto_mop_wash": {
+        "name": "자동 물걸레 세척"
+      },
+      "auto_mop_dry": {
+        "name": "자동 물걸레 건조"
+      },
+      "dnd_mode": {
+        "name": "방해 금지 모드"
+      }
+    },
+    "button": {
+      "empty_dustbin": {
+        "name": "먼지 비우기 즉시 실행"
+      },
+      "mop_wash": {
+        "name": "물걸레 바로 세척"
+      },
+      "mop_dry": {
+        "name": "물걸레 바로 건조"
+      },
+      "residual_water_removal": {
+        "name": "잔수 제거"
+      },
+      "find_vacuum": {
+        "name": "청소기 찾기"
       }
     }
   }

@@ -27,6 +27,105 @@
       },
       "current_job_mode": {
         "name": "Job Mode"
+      },
+      "main_brush_life": {
+        "name": "Main Brush Lifespan"
+      },
+      "side_brush_life": {
+        "name": "Side Brush Lifespan"
+      },
+      "filter_life": {
+        "name": "Filter Lifespan"
+      },
+      "mop_life": {
+        "name": "Mop Lifespan"
+      },
+      "dust_bag_life": {
+        "name": "Dust Bag Lifespan"
+      }
+    },
+    "select": {
+      "cleaning_mode": {
+        "name": "Cleaning Mode",
+        "state": {
+          "suction_mop": "Suction + Mop",
+          "suction_only": "Suction Only",
+          "mop_only": "Mop Only"
+        }
+      },
+      "carpet_mode": {
+        "name": "Carpet Mode",
+        "state": {
+          "smart_carpet": "Smart Carpet Clean",
+          "carpet_avoidance": "Carpet Avoidance"
+        }
+      },
+      "product_volume": {
+        "name": "Product Volume",
+        "state": {
+          "loud": "Loud",
+          "medium": "Medium",
+          "soft": "Soft",
+          "mute": "Mute"
+        }
+      },
+      "suction_strength": {
+        "name": "Suction Strength",
+        "state": {
+          "turbo": "Turbo",
+          "strong": "Strong",
+          "medium": "Medium",
+          "weak": "Weak"
+        }
+      },
+      "water_supply": {
+        "name": "Water Supply",
+        "state": {
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low",
+          "none": "None"
+        }
+      }
+    },
+    "switch": {
+      "ai_obstacle_avoidance": {
+        "name": "AI Obstacle Avoidance"
+      },
+      "auto_resume": {
+        "name": "Auto Resume Cleaning"
+      },
+      "child_lock": {
+        "name": "Child Lock"
+      },
+      "auto_empty_dustbin": {
+        "name": "Auto Empty Dustbin"
+      },
+      "auto_mop_wash": {
+        "name": "Auto Mop Wash"
+      },
+      "auto_mop_dry": {
+        "name": "Auto Mop Dry"
+      },
+      "dnd_mode": {
+        "name": "Do Not Disturb Mode"
+      }
+    },
+    "button": {
+      "empty_dustbin": {
+        "name": "Empty Dustbin Immediately"
+      },
+      "mop_wash": {
+        "name": "Mop Wash Immediately"
+      },
+      "mop_dry": {
+        "name": "Mop Dry Immediately"
+      },
+      "residual_water_removal": {
+        "name": "Residual Water Removal"
+      },
+      "find_vacuum": {
+        "name": "Find Vacuum"
       }
     }
   }

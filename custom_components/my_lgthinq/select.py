@@ -20,6 +20,18 @@ SELECT_DESC = [
         translation_key="cleaning_mode",
     ),
     SelectEntityDescription(
+        key="suctionStrength",
+        name="Suction Strength",
+        options=["turbo", "strong", "medium", "weak"],
+        translation_key="suction_strength",
+    ),
+    SelectEntityDescription(
+        key="waterSupply",
+        name="Water Supply",
+        options=["high", "medium", "low", "none"],
+        translation_key="water_supply",
+    ),
+    SelectEntityDescription(
         key="carpetMode",
         name="Carpet Mode",
         options=["smart_carpet", "carpet_avoidance"],
